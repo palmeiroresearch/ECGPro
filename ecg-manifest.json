@@ -1,0 +1,26 @@
+{
+  "name": "ECG Pro - Evaluación Sistemática",
+  "short_name": "ECG Pro",
+  "description": "Herramienta de evaluación estructurada de electrocardiogramas para uso clínico",
+  "start_url": "./ecg-app.html",
+  "display": "standalone",
+  "background_color": "#e63946",
+  "theme_color": "#e63946",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "ecg-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "ecg-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["medical", "education", "health"],
+  "lang": "es-ES"
+}

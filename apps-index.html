@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apps Médicas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1d3557 0%, #457b9d 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        
+        .app-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1d3557;
+        }
+        
+        .app-description {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .app-badge {
+            display: inline-block;
+            background: #e63946;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .badge-success {
+            background: #06d6a0;
+        }
+        
+        .badge-info {
+            background: #457b9d;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 26px;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Herramientas Médicas</h1>
+        
+        <div class="apps-grid">
+            <!-- App ECG -->
+            <a href="ecg-app.html" class="app-card">
+                <div class="app-icon">❤️</div>
+                <div class="app-title">ECG Pro</div>
+                <div class="app-description">
+                    Evaluación sistemática de electrocardiogramas con diagnóstico inteligente. 
+                    Incluye localización de IAM, arritmias, bloqueos, hipertrofias y más.
+                </div>
+                <span class="app-badge">Evaluación Estructurada</span>
+                <span class="app-badge">20+ Diagnósticos</span>
+                <span class="app-badge">PWA</span>
+            </a>
+            
+            <!-- App Dosis -->
+            <a href="index.html" class="app-card">
+                <div class="app-icon">💊</div>
+                <div class="app-title">Calculadora Dosis Pediátricas</div>
+                <div class="app-description">
+                    Cálculo automático de dosis pediátricas basado en peso. 
+                    Base de datos completa de medicamentos comunes en pediatría.
+                </div>
+                <span class="app-badge badge-success">40+ Medicamentos</span>
+                <span class="app-badge badge-success">Cálculo Automático</span>
+                <span class="app-badge badge-success">PWA</span>
+            </a>
+            
+            <!-- App EIP -->
+            <a href="index_v2.html" class="app-card">
+                <div class="app-icon">🏥</div>
+                <div class="app-title">Evaluación EIP</div>
+                <div class="app-description">
+                    Escala predictiva validada para estadios avanzados en Enfermedad 
+                    Inflamatoria Pélvica. AUC-ROC: 0.93
+                </div>
+                <span class="app-badge badge-info">Validado</span>
+                <span class="app-badge badge-info">AUC 0.93</span>
+                <span class="app-badge badge-info">PWA</span>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>⚠️ Herramientas de apoyo diagnóstico • El criterio clínico es indispensable</p>
+            <p style="margin-top: 10px;">Desarrollado para estudiantes de medicina y médicos en formación</p>
+        </div>
+    </div>
+</body>
+</html>

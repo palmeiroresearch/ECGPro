@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECG Pro - Evaluación Sistemática</title>
+    <meta name="theme-color" content="#e63946">
+    <link rel="manifest" href="ecg-manifest.json">
+    <style>
+        /* Estilos base condensados */
+        :root{--primary:#e63946;--dark:#1d3557;--success:#06d6a0;--warning:#fcbf49}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1d3557 0%,#457b9d 100%);min-height:100vh;padding:15px}
+        .container{max-width:1000px;margin:0 auto}
+        .card{background:#fff;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.2);margin-bottom:20px}
+        .header{background:linear-gradient(135deg,#e63946,#d62828);color:#fff;padding:40px 30px;text-align:center;border-radius:20px 20px 0 0}
+        .header h1{font-size:28px;margin-bottom:8px}
+        .content{padding:30px}
+        .step{display:none}
+        .step.active{display:block;animation:fadeIn .3s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .progress{display:flex;justify-content:space-between;padding:20px 30px;background:#f8f9fa;border-bottom:1px solid #dee2e6}
+        .progress-step{width:40px;height:40px;border-radius:50%;background:#fff;border:3px solid #ddd;display:flex;align-items:center;justify-content:center;font-weight:700;position:relative}
+        .progress-step.active{border-color:var(--primary);color:var(--primary)}
+        .progress-step.completed{background:var(--primary);border-color:var(--primary);color:#fff}
+        .section-title{font-size:24px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+        .option{background:#f8f9fa;border:2px solid #e9ecef;border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .3s}
+        .option:hover{border-color:var(--primary);background:#fff;transform:translateX(4px)}
+        .option.selected{background:linear-gradient(135deg,#fff5f5,#ffe3e3);border-color:var(--primary)}
+        .option input{display:none}
+        .btn{padding:16px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s}
+        .btn-primary{background:var(--primary);color:#fff;width:100%}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(230,57,70,.3)}
+        .nav-buttons{display:flex;gap:12px;margin-top:30px;padding-top:20px;border-top:1px solid #dee2e6}
+        .nav-buttons .btn{flex:1}
+        .btn-secondary{background:#e9ecef;color:#495057}
+        .input-group{margin-bottom:20px}
+        .input-group label{display:block;font-weight:600;margin-bottom:8px}
+        .input-group input{width:100%;padding:14px;border:2px solid #e9ecef;border-radius:10px;font-size:16px}
+        .input-group input:focus{outline:none;border-color:var(--primary)}
+        .alert{padding:16px;border-radius:12px;margin-bottom:20px;display:flex;gap:12px;font-size:14px}
+        .alert-info{background:#e7f5ff;border:1px solid#74c0fc;color:#1864ab}
+        .alert-warning{background:#fff9db;border:1px solid #ffd43b;color:#e67700}
+        .result{display:none;padding:24px;background:linear-gradient(135deg,#fff5f5,#ffe3e3);border:2px solid var(--primary);border-radius:16px;margin-top:20px}
+        .result.show{display:block;animation:slideUp .4s}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .diagnosis{padding:16px;margin-bottom:12px;border-left:4px solid var(--primary);background:#fff;border-radius:8px}
+        .diagnosis-title{font-weight:700;margin-bottom:8px;font-size:16px}
+        .urgency-high{background:#ffe3e3;border:2px solid #ff6b6b;color:#c92a2a;padding:16px;border-radius:12px;margin-bottom:16px;font-weight:600}
+        .urgency-moderate{background:#fff9db;border:2px solid #ffd43b;color:#e67700;padding:16px;border-radius:12px;margin-bottom:16px;font-weight:600}
+        .derivations{background:#e7f5ff;border-left:4px solid #339af0;padding:12px;margin-top:8px;border-radius:8px;font-size:13px;color:#1864ab}
+        @media(max-width:768px){body{padding:10px}.header{padding:30px 20px}.content{padding:20px 15px}.section-title{font-size:20px}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div style="font-size:40px;margin-bottom:10px">❤️</div>
+                <h1>ECG Pro - Evaluación Sistemática</h1>
+                <p>Interpretación estructurada de electrocardiogramas</p>
+            </div>
+            
+            <div class="progress">
+                <div class="progress-step active" id="p1">1</div>
+                <div class="progress-step" id="p2">2</div>
+                <div class="progress-step" id="p3">3</div>
+                <div class="progress-step" id="p4">4</div>
+                <div class="progress-step" id="p5">5</div>
+                <div class="progress-step" id="p6">6</div>
+                <div class="progress-step" id="p7">7</div>
+            </div>
+            
+            <div class="content">
+                <!-- Paso 1: Ritmo -->
+                <div class="step active" id="step1">
+                    <div class="section-title">💓 Paso 1: Ritmo y Frecuencia</div>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <div>Observe DII larga. Busque ondas P, relación P-QRS.</div>
+                    </div>
+                    <div class="input-group">
+                        <label>Frecuencia Cardíaca (lpm)</label>
+                        <input type="number" id="hr" placeholder="60-100" min="20" max="300">
+                    </div>
+                    <div class="option" onclick="select('rhythm','sinusal')">
+                        <input type="radio" name="rhythm" value="sinusal" id="r1">
+                        <strong>Ritmo Sinusal</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">P positivas en DII, relación 1:1, R-R regular</div>
+                    </div>
+                    <div class="option" onclick="select('rhythm','fibrilacion')">
+                        <input type="radio" name="rhythm" value="fibrilacion" id="r2">
+                        <strong>Fibrilación Auricular</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Sin P, R-R irregular, línea ondulante</div>
+                    </div>
+                    <div class="option" onclick="select('rhythm','taquicardia_v')">
+                        <input type="radio" name="rhythm" value="taquicardia_v" id="r3">
+                        <strong>⚠️ Taquicardia Ventricular</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">QRS ancho, FC >100, urgencia</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" disabled>← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(2)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Eje -->
+                <div class="step" id="step2">
+                    <div class="section-title">🧭 Paso 2: Eje Eléctrico</div>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <div>Normal: DI y aVF positivos (-30° a +90°)</div>
+                    </div>
+                    <div class="option" onclick="select('axis','normal')">
+                        <input type="radio" name="axis" value="normal" id="a1">
+                        <strong>Eje Normal (-30° a +90°)</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">DI positivo, aVF positivo</div>
+                    </div>
+                    <div class="option" onclick="select('axis','izq')">
+                        <input type="radio" name="axis" value="izq" id="a2">
+                        <strong>Desviación Izquierda</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">DI+, aVF-. Sugiere HVI, BRIHH</div>
+                    </div>
+                    <div class="option" onclick="select('axis','der')">
+                        <input type="radio" name="axis" value="der" id="a3">
+                        <strong>Desviación Derecha</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">DI-, aVF+. Sugiere HVD, TEP</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(1)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(3)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 3: ST-T (CRÍTICO) -->
+                <div class="step" id="step3">
+                    <div class="section-title">🫀 Paso 3: Segmento ST y Onda T</div>
+                    <div class="alert alert-warning">
+                        <span>⚠️</span>
+                        <div><strong>CRUCIAL:</strong> Identifique elevación/depresión del ST. Clave para SCA.</div>
+                    </div>
+                    <div class="option" onclick="select('st','normal')">
+                        <input type="radio" name="st" value="normal" id="st1">
+                        <strong>ST Isoelétrico (Normal)</strong>
+                    </div>
+                    <div class="option" onclick="select('st','elev_ant')">
+                        <input type="radio" name="st" value="elev_ant" id="st2">
+                        <strong>⚠️ Elevación ST Anterior (V1-V4)</strong>
+                        <div class="derivations">
+                            <strong>🔍 Derivaciones:</strong> V1-V4 (elevación) | Recíproca: DII,III,aVF (depresión)<br>
+                            <strong>Arteria:</strong> Descendente anterior
+                        </div>
+                    </div>
+                    <div class="option" onclick="select('st','elev_inf')">
+                        <input type="radio" name="st" value="elev_inf" id="st3">
+                        <strong>⚠️ Elevación ST Inferior (DII, III, aVF)</strong>
+                        <div class="derivations">
+                            <strong>🔍 Derivaciones:</strong> DII, III, aVF | Recíproca: V1-V3<br>
+                            <strong>Arteria:</strong> Coronaria derecha o circunfleja<br>
+                            <strong>Tip:</strong> Si III>II → CD. Buscar V3R-V4R para IAM VD
+                        </div>
+                    </div>
+                    <div class="option" onclick="select('st','elev_lat')">
+                        <input type="radio" name="st" value="elev_lat" id="st4">
+                        <strong>⚠️ Elevación ST Lateral (I, aVL, V5-V6)</strong>
+                        <div class="derivations">
+                            <strong>🔍 Derivaciones:</strong> DI, aVL, V5-V6<br>
+                            <strong>Arteria:</strong> Circunfleja
+                        </div>
+                    </div>
+                    <div class="option" onclick="select('st','post')">
+                        <input type="radio" name="st" value="post" id="st5">
+                        <strong>⚠️ IAM Posterior (recíproco en V1-V3)</strong>
+                        <div class="derivations">
+                            <strong>🔍 Derivaciones:</strong> V1-V3 (depresión ST, R alta)<br>
+                            <strong>Confirmar:</strong> V7-V9 posteriores
+                        </div>
+                    </div>
+                    <div class="option" onclick="select('st','dep_dif')">
+                        <input type="radio" name="st" value="dep_dif" id="st6">
+                        <strong>Depresión ST Difusa</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Sugiere IAMSEST o isquemia subendocárdica</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(2)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(4)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 4: QRS -->
+                <div class="step" id="step4">
+                    <div class="section-title">⚡ Paso 4: Complejo QRS</div>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <div>QRS normal <0.12s. Marque todas las alteraciones presentes.</div>
+                    </div>
+                    <div class="option" onclick="toggle('qrs_ancho')">
+                        <input type="checkbox" id="qrs_ancho">
+                        <strong>QRS Ancho (≥0.12s)</strong>
+                    </div>
+                    <div class="option" onclick="toggle('brdhh')">
+                        <input type="checkbox" id="brdhh">
+                        <strong>Bloqueo de Rama Derecha (BRDHH)</strong>
+                        <div class="derivations">
+                            <strong>🔍</strong> V1-V2: RSR' ("orejas conejo") | DI,V6: S ancha
+                        </div>
+                    </div>
+                    <div class="option" onclick="toggle('brihh')">
+                        <input type="checkbox" id="brihh">
+                        <strong>Bloqueo de Rama Izquierda (BRIHH)</strong>
+                        <div class="derivations">
+                            <strong>🔍</strong> V5-V6: R ancha empastada | V1: QS o rS
+                        </div>
+                    </div>
+                    <div class="option" onclick="toggle('hvi')">
+                        <input type="checkbox" id="hvi">
+                        <strong>Hipertrofia Ventricular Izquierda (HVI)</strong>
+                        <div class="derivations">
+                            <strong>Sokolov:</strong> S(V1) + R(V5/V6) ≥35mm<br>
+                            <strong>Cornell:</strong> R(aVL) >11mm♀ o >12mm♂
+                        </div>
+                    </div>
+                    <div class="option" onclick="toggle('hvd')">
+                        <input type="checkbox" id="hvd">
+                        <strong>Hipertrofia Ventricular Derecha (HVD)</strong>
+                        <div class="derivations">
+                            <strong>🔍</strong> V1: R alta (R/S>1) | V5-V6: S profunda
+                        </div>
+                    </div>
+                    <div class="option" onclick="toggle('q_pat')">
+                        <input type="checkbox" id="q_pat">
+                        <strong>Ondas Q Patológicas</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Q >0.04s o >25% QRS. IAM antiguo</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(3)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(5)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 5: Onda T -->
+                <div class="step" id="step5">
+                    <div class="section-title">📊 Paso 5: Alteraciones de Onda T</div>
+                    <div class="option" onclick="toggle('t_normal')">
+                        <input type="checkbox" id="t_normal">
+                        <strong>Onda T Normal</strong>
+                    </div>
+                    <div class="option" onclick="toggle('t_inv')">
+                        <input type="checkbox" id="t_inv">
+                        <strong>T Invertida</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Isquemia, IAM evolución, miocardiopatía</div>
+                    </div>
+                    <div class="option" onclick="toggle('t_picuda')">
+                        <input type="checkbox" id="t_picuda">
+                        <strong>T Picuda y Simétrica</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">⚠️ Hiperpotasemia o IAM hiperagudo</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(4)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(6)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 6: QT -->
+                <div class="step" id="step6">
+                    <div class="section-title">⏱️ Paso 6: Intervalo QT</div>
+                    <div class="input-group">
+                        <label>QT medido (ms) - Opcional</label>
+                        <input type="number" id="qt" placeholder="400" min="200" max="700" oninput="calcQTc()">
+                        <div style="font-size:13px;color:#666;margin-top:4px">1 cuadrito = 40ms</div>
+                    </div>
+                    <div id="qtc_result" style="display:none;padding:12px;background:#e7f5ff;border-radius:8px;margin-bottom:16px">
+                        <strong>QTc (Bazett):</strong> <span id="qtc_val"></span> ms
+                        <div id="qtc_interp" style="margin-top:8px;font-size:13px"></div>
+                    </div>
+                    <div class="option" onclick="select('qt_status','normal')">
+                        <input type="radio" name="qt_status" value="normal" id="qt1">
+                        <strong>QTc Normal</strong>
+                    </div>
+                    <div class="option" onclick="select('qt_status','largo')">
+                        <input type="radio" name="qt_status" value="largo" id="qt2">
+                        <strong>⚠️ QTc Prolongado</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Riesgo de Torsades. Revisar fármacos, K+, Mg2+</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(5)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="goStep(7)">Siguiente →</button>
+                    </div>
+                </div>
+
+                <!-- Paso 7: Otros -->
+                <div class="step" id="step7">
+                    <div class="section-title">🔍 Paso 7: Hallazgos Adicionales</div>
+                    <div class="option" onclick="toggle('wpw')">
+                        <input type="checkbox" id="wpw">
+                        <strong>Preexcitación (WPW)</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">PR corto, onda delta, QRS ancho</div>
+                    </div>
+                    <div class="option" onclick="toggle('tep_s1q3t3')">
+                        <input type="checkbox" id="tep_s1q3t3">
+                        <strong>⚠️ Patrón S1Q3T3 (TEP)</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">Sobrecarga aguda VD. Correlacionar clínica</div>
+                    </div>
+                    <div class="option" onclick="toggle('brugada')">
+                        <input type="checkbox" id="brugada">
+                        <strong>⚠️ Patrón Brugada</strong>
+                        <div style="font-size:13px;color:#666;margin-top:4px">ST elevado V1-V2, riesgo muerte súbita</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="goStep(6)">← Anterior</button>
+                        <button class="btn btn-primary" onclick="showResults()">Ver Diagnóstico 🔍</button>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div class="result" id="results">
+                    <div style="font-size:24px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+                        📋 Reporte de Evaluación ECG
+                    </div>
+                    <div id="urgency_banner"></div>
+                    <div id="diagnosis_list"></div>
+                    <div class="alert alert-warning" style="margin-top:20px">
+                        <span>⚠️</span>
+                        <div><strong>Recordatorio:</strong> Herramienta de apoyo. El criterio clínico y contexto del paciente son fundamentales.</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="reset()" style="margin-top:20px">🔄 Nueva Evaluación</button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align:center;color:#fff;padding:20px;font-size:13px">
+            <p>⚠️ Herramienta educativa • Uso clínico con criterio profesional</p>
+            <p style="margin-top:8px;opacity:0.9">Desarrollado para estudiantes y médicos en formación</p>
+        </div>
+    </div>
+
+    <script src="ecg-logic.js"></script>
+    <script>
+        // Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./ecg-sw.js')
+                    .then(reg => console.log('✅ SW registrado'))
+                    .catch(err => console.error('❌ Error SW:', err));
+            });
+        }
+    </script>
+</body>
+</html>
